@@ -104,6 +104,7 @@ def open_customer_window(customer=None):
         entry = ctk.CTkEntry(main_frame, width=250)
         entry.grid(row=i, column=1, padx=10, pady=8, sticky="we")
 
+        # ID field (read-only)
         if label == "ID":
             if customer:
                 entry.insert(0, str(customer.id))
@@ -118,15 +119,14 @@ def open_customer_window(customer=None):
                     border_color=("#d1d5db", "#3f3f46")
                 )
             except Exception:
-                # falls ältere customtkinter Version: ignorieren
                 pass
 
-            # Tooltip anhängen:
+            # Tooltip
             Tooltip(entry, "Die ID wird automatisch vergeben")
             entries_local[label] = entry
             continue
 
-        # normale Felder
+        # normal field
         if customer:
             attr = label_to_attr[label]
             entry.insert(0, getattr(customer, attr))
