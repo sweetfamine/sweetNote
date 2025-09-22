@@ -6,6 +6,7 @@ from tkinter import ttk
 from Manager.customer_manager import CustomerManager
 from Domain.customer import Customer
 from Frontend.widgets.tooltip import Tooltip
+from Utils.validierung import (is_valid_email, is_valid_phone, parse_de_date, fmt_de_date,)
 
 # --- Appearance settings ---
 ctk.set_appearance_mode("light")
