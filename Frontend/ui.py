@@ -8,6 +8,7 @@ from Domain.customer import Customer
 from Frontend.widgets.tooltip import Tooltip
 from Utils.validierung import (is_valid_email, is_valid_phone, parse_de_date, fmt_de_date)
 from datetime import date
+from typing import Optional
 
 # --- Appearance settings ---
 ctk.set_appearance_mode("light")
@@ -39,6 +40,8 @@ label_to_attr = {
     "Vorbehandlung": "pretreatment",
     "Grund": "reason"
 }
+sort_column: Optional[str] = None
+sort_reverse: bool = False
 
 # --- Helper for UI feedback ---
 def mark_invalid(entry):
@@ -53,6 +56,58 @@ def clear_invalid(entry):
     except Exception:
         pass
 
+# --- Sortier-Helper ---
+def _sort_key_for_value(col: str, raw_value: str):
+    v = (raw_value or "").strip()
+
+    if v == "":
+        return (1, None)
+
+    if col == "ID":
+        try:
+            return (0, int(v))
+        except Exception:
+            return (0, v.lower())
+
+    if col in ("Datum", "Geburtstag"):
+        d = parse_de_date(v)
+        if d:
+            return (0, d.toordinal())
+        return (0, v.lower())
+
+    return (0, v.lower())
+
+def sort_treeview(col: Optional[str], reverse: bool):
+    if col is None:
+        return
+    items = list(tree.get_children(""))
+
+    def item_key(iid):
+        cell = tree.set(iid, col)
+        return _sort_key_for_value(col, cell)
+
+    items.sort(key=item_key, reverse=reverse)
+    for idx, iid in enumerate(items):
+        tree.move(iid, "", idx)
+
+def on_heading_click(col: str):
+    global sort_column, sort_reverse
+    if sort_column == col:
+        sort_reverse = not sort_reverse
+    else:
+        sort_column = col
+        sort_reverse = False
+    sort_treeview(sort_column, sort_reverse)
+    _update_heading_arrows()
+
+def _update_heading_arrows():
+    for c in columns:
+        if sort_column == c:
+            arrow = " ▼" if sort_reverse else " ▲"
+        else:
+            arrow = ""
+        tree.heading(c, text=c + arrow, command=lambda col=c: on_heading_click(col))
+
 # --- Update table with customer data ---
 def update_table(customers=None):
     for row in tree.get_children():
@@ -65,6 +120,10 @@ def update_table(customers=None):
                 return fmt_de_date(val)
             return val
         tree.insert("", "end", values=[fmt(col) for col in columns])
+
+    if sort_column:
+        sort_treeview(sort_column, sort_reverse)
+    _update_heading_arrows()
 
 # --- Search functionality ---
 def btn_search_click(event=None):
@@ -96,8 +155,6 @@ def btn_edit_click():
 
 # --- Customer window for add/edit ---
 def open_customer_window(customer=None):
-
-    # Create new add customer window
     win = ctk.CTkToplevel(root)
     win.title("Kunde bearbeiten" if customer else "Neuen Kunden hinzufügen")
     
@@ -115,7 +172,6 @@ def open_customer_window(customer=None):
     main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
     entries_local = {}
-
     # Create entry fields
     for i, label in enumerate(labels):
         tk_label = ctk.CTkLabel(main_frame, text=label, anchor="e", width=120)
@@ -124,23 +180,20 @@ def open_customer_window(customer=None):
         entry = ctk.CTkEntry(main_frame, width=250)
         entry.grid(row=i, column=1, padx=10, pady=8, sticky="we")
 
-        # ID field (read-only)
         if label == "ID":
             if customer:
                 entry.insert(0, str(customer.id))
             else:
                 entry.insert(0, str(manager.preview_next_id()))
-
             entry.configure(state="disabled", takefocus=False)
             try:
                 entry.configure(
-                    fg_color=("#eeeeee", "#2a2a2a"),   # Background
-                    text_color=("#6b7280", "#9ca3af"), # Text
+                    fg_color=("#eeeeee", "#2a2a2a"), # Background
+                    text_color=("#6b7280", "#9ca3af"),  # Text
                     border_color=("#d1d5db", "#3f3f46")
                 )
             except Exception:
                 pass
-
             # Tooltip
             Tooltip(entry, "Die ID wird automatisch vergeben")
             entries_local[label] = entry
@@ -161,7 +214,7 @@ def open_customer_window(customer=None):
 
         entries_local[label] = entry
 
-        # live validation on focus out
+
         def on_focus_out(e, label=label, entry=entry):
             val = entry.get()
             clear_invalid(entry)
@@ -225,12 +278,10 @@ def open_customer_window(customer=None):
         if errors:
             first_error = errors[0]
             messagebox.showerror("Validierung", first_error, parent=win)
-
             for label in labels:
                 if label == "ID":
                     continue
                 entry = entries_local[label]
-
                 if entry.cget("border_color") == "#ef4444":
                     entry.focus_set()
                     break
@@ -251,14 +302,13 @@ def open_customer_window(customer=None):
     btn_cancel.pack(side="right", padx=10)
 
 # --- Layout main window ---
-
 # Top frame: search
 frame_top = ctk.CTkFrame(root)
 frame_top.pack(fill="x", padx=10, pady=10)
 
 entry_search = ctk.CTkEntry(frame_top)
 entry_search.pack(side="left", fill="x", expand=True, padx=(0,5))
-entry_search.bind("<Return>", btn_search_click)  # Trigger search on Enter
+entry_search.bind("<Return>", btn_search_click) # Trigger search on Enter
 
 btn_search = ctk.CTkButton(frame_top, text="Suchen", width=100, command=btn_search_click)
 btn_search.pack(side="left")
@@ -270,7 +320,7 @@ frame_table.pack(fill="both", expand=True, padx=10, pady=(0,10))
 columns = labels.copy()
 tree = ttk.Treeview(frame_table, columns=columns, show="headings")
 for col in columns:
-    tree.heading(col, text=col)
+    tree.heading(col, text=col, command=lambda c=col: on_heading_click(c))
     tree.column(col, width=120)
 tree.pack(fill="both", expand=True, side="left")
 
@@ -278,7 +328,7 @@ scrollbar = ttk.Scrollbar(frame_table, orient="vertical", command=tree.yview)
 tree.configure(yscrollcommand=scrollbar.set)
 scrollbar.pack(side="right", fill="y")
 
-# Bottom buttons
+# Bottom buttons container
 frame_buttons = ctk.CTkFrame(root)
 frame_buttons.pack(fill="x", padx=10, pady=(0,10), anchor="e")
 
@@ -292,4 +342,9 @@ btn_edit = ctk.CTkButton(frame_buttons, text="Bearbeiten", width=120, command=bt
 btn_edit.pack(side="left", padx=5)
 
 update_table()
+sort_column = "ID"
+sort_reverse = False
+sort_treeview(sort_column, sort_reverse)
+_update_heading_arrows()
+
 root.mainloop()
