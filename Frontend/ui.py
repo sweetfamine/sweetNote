@@ -140,9 +140,9 @@ def open_customer_window(customer=None):
     def save_customer():
         data = {label_to_attr[label]: entries_local[label].get() for label in labels if label != "ID"}
 
-        if customer:  # Editing
+        if customer:
             manager.update_customer(customer.id, **data)
-        else:  # Adding
+        else:
             new_customer = manager.add_customer(**data)
 
         update_table()
