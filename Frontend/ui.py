@@ -223,7 +223,17 @@ def open_customer_window(customer=None):
                 data[attr] = raw
 
         if errors:
-            messagebox.showerror("Validierung", "\n".join(sorted(set(errors))))
+            first_error = errors[0]
+            messagebox.showerror("Validierung", first_error, parent=win)
+
+            for label in labels:
+                if label == "ID":
+                    continue
+                entry = entries_local[label]
+
+                if entry.cget("border_color") == "#ef4444":
+                    entry.focus_set()
+                    break
             return
 
         if customer:
