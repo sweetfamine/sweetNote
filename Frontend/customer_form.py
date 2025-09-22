@@ -35,7 +35,7 @@ class CustomerForm(ctk.CTkToplevel):
                     )
                 except Exception:
                     pass
-                Tooltip(entry, "Die ID wird nach dem Speichern automatisch vergeben" if not customer else "Nicht änderbar")
+                Tooltip(entry, "Die ID wird nach dem Speichern automatisch vergeben" if not customer else "ID des Kunden")
                 self.entries_local[label] = entry
                 continue
             if customer:
