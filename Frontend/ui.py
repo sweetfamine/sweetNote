@@ -191,6 +191,12 @@ def open_customer_window(customer=None):
             raw = entries_local[label].get().strip()
             clear_invalid(entries_local[label])
 
+            # Pflichtfelder
+            if label in ("Datum", "Vorname", "Name") and not raw:
+                errors.append(f"{label} darf nicht leer sein.")
+                mark_invalid(entries_local[label])
+                continue
+
             if label == "Email":
                 if not is_valid_email(raw):
                     errors.append("Bitte eine gültige Email angeben.")
