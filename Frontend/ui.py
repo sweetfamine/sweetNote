@@ -6,7 +6,8 @@ from tkinter import ttk, messagebox
 from Manager.customer_manager import CustomerManager
 from Domain.customer import Customer
 from Frontend.widgets.tooltip import Tooltip
-from Utils.validierung import (is_valid_email, is_valid_phone, parse_de_date, fmt_de_date,)
+from Utils.validierung import (is_valid_email, is_valid_phone, parse_de_date, fmt_de_date)
+from datetime import date
 
 # --- Appearance settings ---
 ctk.set_appearance_mode("light")
@@ -145,13 +146,19 @@ def open_customer_window(customer=None):
             entries_local[label] = entry
             continue
 
-        # normal field
+        # normale Felder
         if customer:
+            # existierender Kunde -> gespeicherte Werte anzeigen
             attr = label_to_attr[label]
             value = getattr(customer, attr)
             if label in ("Geburtstag", "Datum") and isinstance(value, str):
                 value = fmt_de_date(value)
             entry.insert(0, value if value else "")
+        else:
+            # neuer Kunde -> Datum automatisch vorbelegen
+            if label == "Datum":
+                entry.insert(0, date.today().strftime("%d.%m.%Y"))
+
         entries_local[label] = entry
 
         # live validation on focus out
