@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from Manager.customer_manager import CustomerManager
 from Domain.customer import Customer
 from Frontend.widgets.tooltip import Tooltip
@@ -39,13 +39,31 @@ label_to_attr = {
     "Grund": "reason"
 }
 
+# --- Helper for UI feedback ---
+def mark_invalid(entry):
+    try:
+        entry.configure(border_color="#ef4444")
+    except Exception:
+        pass
+
+def clear_invalid(entry):
+    try:
+        entry.configure(border_color=None)
+    except Exception:
+        pass
+
 # --- Update table with customer data ---
 def update_table(customers=None):
     for row in tree.get_children():
         tree.delete(row)
     data = customers if customers is not None else manager.get_all_customers()
     for customer in data:
-        tree.insert("", "end", values=[getattr(customer, label_to_attr[col]) for col in columns])
+        def fmt(col):
+            val = getattr(customer, label_to_attr[col])
+            if col in ("Geburtstag", "Datum") and isinstance(val, str):
+                return fmt_de_date(val)
+            return val
+        tree.insert("", "end", values=[fmt(col) for col in columns])
 
 # --- Search functionality ---
 def btn_search_click(event=None):
@@ -130,8 +148,25 @@ def open_customer_window(customer=None):
         # normal field
         if customer:
             attr = label_to_attr[label]
-            entry.insert(0, getattr(customer, attr))
+            value = getattr(customer, attr)
+            if label in ("Geburtstag", "Datum") and isinstance(value, str):
+                value = fmt_de_date(value)
+            entry.insert(0, value if value else "")
         entries_local[label] = entry
+
+        # live validation on focus out
+        def on_focus_out(e, label=label, entry=entry):
+            val = entry.get()
+            clear_invalid(entry)
+            if label == "Email" and not is_valid_email(val):
+                mark_invalid(entry)
+            elif label == "Telefon" and not is_valid_phone(val):
+                mark_invalid(entry)
+            elif label in ("Geburtstag", "Datum"):
+                if val.strip() and not parse_de_date(val):
+                    mark_invalid(entry)
+
+        entry.bind("<FocusOut>", on_focus_out)
 
     # Buttons frame
     button_frame = ctk.CTkFrame(main_frame)
@@ -139,12 +174,49 @@ def open_customer_window(customer=None):
 
     # --- Save customer ---
     def save_customer():
-        data = {label_to_attr[label]: entries_local[label].get() for label in labels if label != "ID"}
+        errors = []
+        data = {}
+
+        for label in labels:
+            if label == "ID":
+                continue
+            attr = label_to_attr[label]
+            raw = entries_local[label].get().strip()
+            clear_invalid(entries_local[label])
+
+            if label == "Email":
+                if not is_valid_email(raw):
+                    errors.append("Bitte eine gültige Email angeben.")
+                    mark_invalid(entries_local[label])
+                data[attr] = raw
+
+            elif label == "Telefon":
+                if not is_valid_phone(raw):
+                    errors.append("Telefonnummer ist ungültig (z. B. +49 123 4567).")
+                    mark_invalid(entries_local[label])
+                data[attr] = raw
+
+            elif label in ("Geburtstag", "Datum"):
+                if raw:
+                    d = parse_de_date(raw)
+                    if not d:
+                        errors.append(f"{label}: bitte als TT.MM.JJJJ angeben.")
+                        mark_invalid(entries_local[label])
+                    else:
+                        data[attr] = d.isoformat()
+                else:
+                    data[attr] = ""
+            else:
+                data[attr] = raw
+
+        if errors:
+            messagebox.showerror("Validierung", "\n".join(sorted(set(errors))))
+            return
 
         if customer:
             manager.update_customer(customer.id, **data)
         else:
-            new_customer = manager.add_customer(**data)
+            manager.add_customer(**data)
 
         update_table()
         win.destroy()
