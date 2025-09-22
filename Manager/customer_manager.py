@@ -1,30 +1,30 @@
+import os
 import sqlite3
 from Domain.customer import Customer
 from Data.Mssql import sql_commands as sql
 
-DB_PATH = "data/customers.db"
-
 class CustomerManager:
-    def __init__(self):
-        self.conn = sqlite3.connect(DB_PATH)
+    def __init__(self, db_path: str):
+        self.db_path = os.path.abspath(db_path)
+        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA journal_mode = WAL;")
+        self.conn.execute("PRAGMA foreign_keys = ON;")
         self._create_table()
 
     def _create_table(self):
         self.conn.execute(sql.CREATE_CUSTOMER_TABLE)
+        self.conn.execute("CREATE INDEX IF NOT EXISTS idx_customers_name ON customers(lastName, firstName);")
+        self.conn.execute("CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);")
         self.conn.commit()
-
-    def _generate_id(self):
-        cursor = self.conn.execute("SELECT MAX(id) FROM customers")
-        max_id = cursor.fetchone()[0]
-        return (max_id or 0) + 1
 
     def add_customer(self, **data):
-        if "id" not in data or data["id"] is None:
-            data["id"] = self._generate_id()
-        self.conn.execute(sql.INSERT_CUSTOMER, data)
+        data.pop("id", None)
+        cur = self.conn.execute(sql.INSERT_CUSTOMER, data)
         self.conn.commit()
-        return self.get_customer_by_id(data["id"])
+        new_id = cur.lastrowid
+        return self.get_customer_by_id(new_id)
 
     def update_customer(self, id, **data):
         data["id"] = id
@@ -46,11 +46,12 @@ class CustomerManager:
         return Customer(**dict(row)) if row else None
 
     def search_customers(self, query):
-        query = f"%{query.lower()}%"
+        query = f"%{(query or '').lower()}%"
         cursor = self.conn.execute(sql.SEARCH_CUSTOMERS, {"query": query})
         return [Customer(**row) for row in map(dict, cursor.fetchall())]
 
-    def preview_next_id(self):
-        cursor = self.conn.execute("SELECT MAX(id) FROM customers")
-        max_id = cursor.fetchone()[0]
-        return (max_id or 0) + 1
+    def close(self):
+        try:
+            self.conn.close()
+        except Exception:
+            pass

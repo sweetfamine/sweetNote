@@ -1,7 +1,6 @@
-# Table creation
 CREATE_CUSTOMER_TABLE = """
 CREATE TABLE IF NOT EXISTS customers (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     date TEXT,
     lastName TEXT,
     firstName TEXT,
@@ -16,15 +15,13 @@ CREATE TABLE IF NOT EXISTS customers (
 )
 """
 
-# Insert a new customer
 INSERT_CUSTOMER = """
-INSERT INTO customers (id, date, lastName, firstName, birthDate, address,
+INSERT INTO customers (date, lastName, firstName, birthDate, address,
                        telephoneNumber, email, insurance, doctor, pretreatment, reason)
-VALUES (:id, :date, :lastName, :firstName, :birthDate, :address,
+VALUES (:date, :lastName, :firstName, :birthDate, :address,
         :telephoneNumber, :email, :insurance, :doctor, :pretreatment, :reason)
 """
 
-# Update an existing customer
 UPDATE_CUSTOMER = """
 UPDATE customers
 SET date=:date, lastName=:lastName, firstName=:firstName, birthDate=:birthDate,
@@ -33,17 +30,16 @@ SET date=:date, lastName=:lastName, firstName=:firstName, birthDate=:birthDate,
 WHERE id=:id
 """
 
-# Delete customer by ID
 DELETE_CUSTOMER = "DELETE FROM customers WHERE id=:id"
 
-# Select all customers
 SELECT_ALL_CUSTOMERS = "SELECT * FROM customers"
 
-# Select customer by ID
 SELECT_CUSTOMER_BY_ID = "SELECT * FROM customers WHERE id=:id"
 
-# Search customers
 SEARCH_CUSTOMERS = """
 SELECT * FROM customers
-WHERE LOWER(firstName) LIKE :query OR LOWER(lastName) LIKE :query OR LOWER(email) LIKE :query
+WHERE LOWER(firstName) LIKE :query
+   OR LOWER(lastName)  LIKE :query
+   OR LOWER(email)     LIKE :query
+   OR LOWER(telephoneNumber) LIKE :query
 """

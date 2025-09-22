@@ -1,0 +1,5 @@
+{
+  "appearance_mode": "light",
+  "prefill_date_on_new": true,
+  "db_path": "data/customers.db"
+}
