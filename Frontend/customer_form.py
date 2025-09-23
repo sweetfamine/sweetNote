@@ -3,7 +3,8 @@ from tkinter import messagebox
 from datetime import date
 from Utils.validierung import is_valid_email, is_valid_phone, parse_de_date, fmt_de_date
 from Frontend.widgets.tooltip import Tooltip
-from Frontend.constants import labels, label_to_attr
+from Frontend.constants import labels, label_to_attr, required_fields
+
 
 class CustomerForm(ctk.CTkToplevel):
     def __init__(self, parent, manager, config, customer=None, on_save=None):
@@ -16,14 +17,22 @@ class CustomerForm(ctk.CTkToplevel):
         self.geometry("500x650")
         self.attributes("-topmost", True)
         self.focus_force()
+
         main_frame = ctk.CTkFrame(self, corner_radius=10)
         main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         self.entries_local = {}
+        
         for i, label in enumerate(labels):
-            tk_label = ctk.CTkLabel(main_frame, text=label, anchor="e", width=120)
-            tk_label.grid(row=i, column=0, padx=10, pady=8, sticky="e")
+            label_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
+            label_frame.grid(row=i, column=0, padx=10, pady=8, sticky="e")
+
+            ctk.CTkLabel(label_frame, text=label, anchor="e").pack(side="left")
+            if label in required_fields:
+                ctk.CTkLabel(label_frame, text="*", text_color="red").pack(side="left")
+
             entry = ctk.CTkEntry(main_frame, width=250)
             entry.grid(row=i, column=1, padx=10, pady=8, sticky="we")
+
             if label == "ID":
                 entry.insert(0, str(customer.id) if customer else "—")
                 entry.configure(state="disabled", takefocus=False)
@@ -38,6 +47,7 @@ class CustomerForm(ctk.CTkToplevel):
                 Tooltip(entry, "Die ID wird nach dem Speichern automatisch vergeben" if not customer else "ID des Kunden")
                 self.entries_local[label] = entry
                 continue
+
             if customer:
                 attr = label_to_attr[label]
                 value = getattr(customer, attr)
@@ -48,6 +58,7 @@ class CustomerForm(ctk.CTkToplevel):
                 if label == "Datum" and config.get("prefill_date_on_new", True):
                     entry.insert(0, date.today().strftime("%d.%m.%Y"))
             self.entries_local[label] = entry
+
             def on_focus_out(e, label=label, entry=entry):
                 val = entry.get()
                 try:
@@ -62,6 +73,7 @@ class CustomerForm(ctk.CTkToplevel):
                     if val.strip() and not parse_de_date(val):
                         entry.configure(border_color="#ef4444")
             entry.bind("<FocusOut>", on_focus_out)
+
         button_frame = ctk.CTkFrame(main_frame)
         button_frame.grid(row=len(labels), column=0, columnspan=2, pady=20)
         btn_save = ctk.CTkButton(button_frame, text="Speichern", width=120, command=self.save_customer)

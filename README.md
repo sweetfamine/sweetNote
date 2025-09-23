@@ -1,6 +1,6 @@
 # sweetNote - TODO
 
-1. [ ] Hinzufügen von einem Roten * für Pflichtfelder  
+1. [✔️] Hinzufügen von einem Roten * für Pflichtfelder  
 2. [ ] Echtzeit-Validierung: Eingaben sollen beim Tippen von rot zurückschalten  
 3. [ ] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen  
 4. [ ] Eigenes Logo oben rechts  

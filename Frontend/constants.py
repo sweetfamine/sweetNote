@@ -3,6 +3,8 @@ labels = [
     "Telefon", "Email", "Versicherung", "Hausarzt", "Vorbehandlung", "Grund"
 ]
 
+required_fields = {"Datum", "Vorname", "Name"}
+
 label_to_attr = {
     "ID": "id",
     "Datum": "date",

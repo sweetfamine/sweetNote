@@ -42,9 +42,11 @@ class MainWindow(ctk.CTk):
         frame_table.pack(fill="both", expand=True, padx=10, pady=(0,10))
         self.columns = labels.copy()
         self.tree = ttk.Treeview(frame_table, columns=self.columns, show="headings")
+
         for col in self.columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.on_heading_click(c))
             self.tree.column(col, width=120)
+            
         self.tree.pack(fill="both", expand=True, side="left")
         scrollbar = ttk.Scrollbar(frame_table, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)

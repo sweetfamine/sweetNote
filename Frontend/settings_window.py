@@ -12,6 +12,7 @@ class SettingsWindow(ctk.CTkToplevel):
         self.attributes("-topmost", True)
         self.focus_force()
         self.grab_set()
+        
         wrapper = ctk.CTkFrame(self, corner_radius=10)
         wrapper.pack(fill="both", expand=True, padx=16, pady=16)
         ctk.CTkLabel(wrapper, text="Theme").grid(row=0, column=0, sticky="w", padx=6, pady=(6,4))
@@ -26,6 +27,7 @@ class SettingsWindow(ctk.CTkToplevel):
         self.db_var = ctk.StringVar(value=config.get("db_path", "data/customers.db"))
         db_entry = ctk.CTkEntry(wrapper, textvariable=self.db_var, width=260)
         db_entry.grid(row=2, column=1, sticky="w", padx=(6,0), pady=4)
+
         def browse_db():
             path = filedialog.askopenfilename(
                 title="Select SQLite database",
