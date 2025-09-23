@@ -1,2 +1,4 @@
 **/__pycache__/
 customers.db
+customers.db-wal
+customers.db-shm
