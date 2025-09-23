@@ -3,16 +3,18 @@ from datetime import datetime
 
 def is_valid_email(value: str) -> bool:
     if not value.strip():
-        return True  # leer zulassen (falls optional)
+        return True  # empty is allowed
     return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", value.strip()) is not None
 
-def is_valid_phone(value: str) -> bool:
+def is_valid_phone(value: str) -> bool: # +49123456789 or 0123456789
     v = value.strip()
     if not v:
         return True
-    if not re.match(r"^\+?[0-9\s().-]{6,}$", v):
-        return False
-    return sum(c.isdigit() for c in v) >= 6
+    if re.fullmatch(r"\+49\d{5,}$", v):
+        return True
+    if re.fullmatch(r"0\d{5,}$", v):
+        return True
+    return False
 
 def parse_de_date(value: str):
     v = value.strip()
