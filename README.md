@@ -2,7 +2,7 @@
 
 [✔️] Hinzufügen von einem Roten * für Pflichtfelder  
 [✔️] Echtzeit-Validierung: Eingaben sollen beim Tippen von rot zurückschalten  
-[ ] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen  
+[✔️] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen
 [ ] Eigenes Logo oben rechts
 [ ] Dark Mode für alle Widgets (inkl. Treeview)  
 [ ] Drucken der Tabelle per Knopfdruck  
@@ -13,5 +13,6 @@
 [ ] Validierung auch in der DB (Constraints)  
 [ ] Login Screen  
 [ ] Datenbank-Verschlüsselung
-[ ] Benutzer Verwaltung? 
+[ ] Beim Build automatisch Version & Build Datum in Config.json & config.py setzen
+[ ] Benutzer Verwaltung?
 [ ] Lizenz Verwaltung?
