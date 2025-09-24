@@ -2,3 +2,6 @@
 customers.db
 customers.db-wal
 customers.db-shm
+/dist
+/build
+sweetNote.spec
