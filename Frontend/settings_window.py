@@ -72,6 +72,9 @@ class SettingsWindow(ctk.CTkToplevel):
 
         try:
             ctk.set_appearance_mode(self.config.get("appearance_mode", "light"))
+            # Treeview-Style neu anwenden
+            if hasattr(self.master, "_apply_treeview_style"):
+                self.master._apply_treeview_style()
         except Exception:
             pass
 

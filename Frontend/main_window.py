@@ -56,11 +56,14 @@ class MainWindow(ctk.CTk):
         for col in self.columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.on_heading_click(c))
             self.tree.column(col, width=120)
-            
+
         self.tree.pack(fill="both", expand=True, side="left")
         scrollbar = ttk.Scrollbar(frame_table, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
+
+        self._apply_treeview_style()
+
         frame_buttons = ctk.CTkFrame(self)
         frame_buttons.pack(fill="x", padx=10, pady=(0,10), anchor="e")
         btn_add = ctk.CTkButton(frame_buttons, text="Hinzufügen", width=120, command=self.btn_add_click)
@@ -71,6 +74,52 @@ class MainWindow(ctk.CTk):
         btn_edit.pack(side="left", padx=5)
         btn_settings = ctk.CTkButton(frame_buttons, text="⚙ Einstellungen", width=140, command=self.open_settings_window)
         btn_settings.pack(side="right", padx=5)
+
+    def _apply_treeview_style(self):
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        mode = ctk.get_appearance_mode().lower()
+
+        if mode == "dark":
+            bg = "#1e1e1e"
+            fg = "white"
+            sel_bg = "#3b82f6"
+            sel_fg = "white"
+            heading_bg = "#2a2a2a"
+            heading_fg = "white"
+        else:
+            bg = "white"
+            fg = "black"
+            sel_bg = "#2563eb"
+            sel_fg = "white"
+            heading_bg = "#f3f4f6"
+            heading_fg = "black"
+
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+
+        style.configure("Treeview",
+                        background=bg,
+                        foreground=fg,
+                        fieldbackground=bg,
+                        borderwidth=0)
+
+        style.configure("Treeview.Heading",
+                        background=heading_bg,
+                        foreground=heading_fg,
+                        borderwidth=1)
+
+        style.map("Treeview",
+                background=[("selected", sel_bg)],
+                foreground=[("selected", sel_fg)])
+
+        style.map("Treeview.Heading",
+                background=[("active", heading_bg)],
+                foreground=[("active", heading_fg)])
+
+        for iid in self.tree.get_children():
+            self.tree.item(iid, tags=("row",))
+
+        self.tree.tag_configure("row", background=bg, foreground=fg)
 
     def _sort_key_for_value(self, col: str, raw_value: str):
         v = (raw_value or "").strip()
