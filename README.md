@@ -4,7 +4,7 @@
 [✔️] Echtzeit-Validierung: Eingaben sollen beim Tippen von rot zurückschalten  
 [✔️] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen
 [✔️] Eigenes Logo oben rechts & Taskleiste
-[ ] Dark Mode für alle Widgets (inkl. Treeview)  
+[✔️] Dark Mode für alle Widgets (inkl. Treeview)  
 [ ] Drucken der Tabelle per Knopfdruck  
 [ ] Dopplekick to edit a customer  
 [ ] evtll Header noch über der Suche für Menüs z.B Einstellungen, Benutzer, information?  
