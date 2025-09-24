@@ -1,24 +1,29 @@
 import json
 import os
+import sys
 from typing import Any, Dict, Optional
 
-#  Config keys and their default values if there is no config set otherwise
 _DEFAULTS: Dict[str, Any] = {
-    "appearance_mode": "light",          # "light" | "dark" | "system"
-    "prefill_date_on_new": True,         # prefill "Datum" with today for new customers
-    "db_path": "data/customers.db",      # fallback; can be overridden
-    "supported_languages": ["de"],       # languages for UI and PDF generation
-    "support_website": "https://github.com/sweetfamine/sweetNote/issues", # support website
-    "app_version": "0.1.0",               # current app version
-    "build_date": "24.09.2025",           # build date
-    "support_phone": "",                  # support phone number (optional)
-    "support_email": "sweet.famine@outlook.de"  # support email (optional)
+    "appearance_mode": "light",          
+    "prefill_date_on_new": True,         
+    "db_path": "data/customers.db",      
+    "supported_languages": ["de"],       
+    "support_website": "https://github.com/sweetfamine/sweetNote/issues",
+    "app_version": "0.1.0",
+    "build_date": "24.09.2025",
+    "support_phone": "",
+    "support_email": "sweet.famine@outlook.de"
 }
 
 class Config:
-    """Minimal JSON-backed config with defaults."""
     def __init__(self, path: Optional[str] = None):
-        root = os.path.dirname(os.path.dirname(__file__))
+        if getattr(sys, "frozen", False):
+            # Im Build: EXE-Verzeichnis
+            root = os.path.dirname(os.path.abspath(sys.executable))
+        else:
+            # Im Dev: Projekt-Root
+            root = os.path.dirname(os.path.dirname(__file__))
+
         self.path: str = path or os.path.join(root, "config.json")
         self.data: Dict[str, Any] = {}
         self.load()
