@@ -1,9 +1,9 @@
 # sweetNote - TODO
 
-[✔️] Hinzufügen von einem Roten * für Pflichtfelder  
+[✔️] Hinzufügen von einem Roten \* für Pflichtfelder  
 [✔️] Echtzeit-Validierung: Eingaben sollen beim Tippen von rot zurückschalten  
 [✔️] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen
-[ ] Eigenes Logo oben rechts
+[✔️] Eigenes Logo oben rechts & Taskleiste
 [ ] Dark Mode für alle Widgets (inkl. Treeview)  
 [ ] Drucken der Tabelle per Knopfdruck  
 [ ] Dopplekick to edit a customer  

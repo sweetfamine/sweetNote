@@ -1,4 +1,6 @@
 import customtkinter as ctk
+import os
+import tkinter as tk
 from tkinter import ttk, messagebox
 from typing import Optional
 from Utils.validierung import parse_de_date, fmt_de_date
@@ -15,6 +17,14 @@ class MainWindow(ctk.CTk):
         self.sort_reverse: bool = False
         self.title("sweetNote - Kundenverwaltung")
         self.geometry("1900x600")
+
+        logo_path = os.path.join(os.path.dirname(__file__), "assets", "sweetNote_Icon128.ico")
+        if os.path.exists(logo_path):
+            try:
+                self.iconbitmap(logo_path)
+            except Exception as e:
+                print("Logo konnte nicht geladen werden:", e)
+
         self._build_ui()
         self.update_table()
         self.sort_column = "ID"
