@@ -50,6 +50,10 @@ class CustomerManager:
         cursor = self.conn.execute(sql.SEARCH_CUSTOMERS, {"query": query})
         return [Customer(**row) for row in map(dict, cursor.fetchall())]
 
+    def delete_all_customers(self):
+        self.conn.execute(sql.DELETE_ALL_CUSTOMERS)
+        self.conn.commit()
+
     def close(self):
         try:
             self.conn.close()

@@ -43,3 +43,4 @@ WHERE LOWER(firstName) LIKE :query
    OR LOWER(email)     LIKE :query
    OR LOWER(telephoneNumber) LIKE :query
 """
+DELETE_ALL_CUSTOMERS = "DELETE FROM customers;"

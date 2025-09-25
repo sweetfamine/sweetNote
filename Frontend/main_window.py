@@ -8,6 +8,8 @@ from Frontend.customer_form import CustomerForm
 from Frontend.settings_window import SettingsWindow
 from Frontend.constants import labels, label_to_attr
 from Frontend.print_window import PrintWindow
+from Frontend.import_window import ImportWindow
+from Frontend.export_window import ExportWindow
 
 class MainWindow(ctk.CTk):
     def __init__(self, manager, config):
@@ -76,6 +78,10 @@ class MainWindow(ctk.CTk):
         btn_settings.pack(side="right", padx=5)
         btn_print = ctk.CTkButton(frame_buttons, text="Drucken", width=120, command=self.btn_print_click)
         btn_print.pack(side="left", padx=5)
+        btn_export = ctk.CTkButton(frame_buttons, text="Exportieren", width=120, command=self.btn_export_click)
+        btn_export.pack(side="left", padx=5)
+        btn_import = ctk.CTkButton(frame_buttons, text="Importieren", width=120, command=self.btn_import_click)
+        btn_import.pack(side="left", padx=5)
 
 
     def _apply_treeview_style(self):
@@ -223,3 +229,14 @@ class MainWindow(ctk.CTk):
             messagebox.showwarning("Hinweis", "Keine Daten zum Drucken gefunden.")
             return
         PrintWindow(self, self.columns, rows)
+
+    def btn_export_click(self):
+        selected_items = self.tree.selection()
+        if selected_items:
+            selected_ids = [int(self.tree.item(i)["values"][0]) for i in selected_items]
+        else:
+            selected_ids = None
+        ExportWindow(self, self.manager, self.config, selected_ids)
+
+    def btn_import_click(self):
+        ImportWindow(self, self.manager, self.config, on_done=self.update_table)

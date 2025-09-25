@@ -9,6 +9,7 @@
 [✔️] Dark Mode für alle Widgets (inkl. Treeview)  
 [ ] Drucken der Tabelle per Knopfdruck & Exportieren von der Datei
 [ ] Anklicken eines angewählten Customers wählt ihn wieder ab
+[ ] Import von Customer Daten (json)
 [ ] Dopplekick to edit a customer
 [ ] Massen löschen (mit zeitbereich)
 [ ] evtll Header noch über der Suche für Menüs z.B Einstellungen, Benutzer, information?  
