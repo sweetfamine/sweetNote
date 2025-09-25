@@ -53,7 +53,7 @@ class MainWindow(ctk.CTk):
         frame_table = ctk.CTkFrame(self)
         frame_table.pack(fill="both", expand=True, padx=10, pady=(0,10))
         self.columns = labels.copy()
-        self.tree = ttk.Treeview(frame_table, columns=self.columns, show="headings")
+        self.tree = ttk.Treeview(frame_table, columns=self.columns, show="headings", selectmode="extended")
 
         for col in self.columns:
             self.tree.heading(col, text=col, command=lambda c=col: self.on_heading_click(c))
@@ -63,6 +63,8 @@ class MainWindow(ctk.CTk):
         scrollbar = ttk.Scrollbar(frame_table, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
+        self.tree.pack(fill="both", expand=True, side="left")
+        self.tree.bind("<Button-1>", self.on_click)
 
         self._apply_treeview_style()
 
@@ -240,3 +242,10 @@ class MainWindow(ctk.CTk):
 
     def btn_import_click(self):
         ImportWindow(self, self.manager, self.config, on_done=self.update_table)
+
+    def on_click(self, event):
+        region = self.tree.identify("region", event.x, event.y)
+        if region == "cell":
+            iid = self.tree.identify_row(event.y)
+            if iid in self.tree.selection():
+                self.tree.selection_remove(iid)
