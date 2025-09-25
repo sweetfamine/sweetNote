@@ -7,8 +7,10 @@
 [✔️] Information Button: Version, Datum, Support Nummer, Website, in den Einstellungen
 [✔️] Eigenes Logo oben rechts & Taskleiste
 [✔️] Dark Mode für alle Widgets (inkl. Treeview)  
-[ ] Drucken der Tabelle per Knopfdruck  
-[ ] Dopplekick to edit a customer  
+[ ] Drucken der Tabelle per Knopfdruck & Exportieren von der Datei
+[ ] Anklicken eines angewählten Customers wählt ihn wieder ab
+[ ] Dopplekick to edit a customer
+[ ] Massen löschen (mit zeitbereich)
 [ ] evtll Header noch über der Suche für Menüs z.B Einstellungen, Benutzer, information?  
 [ ] Startup Animation: kleine Animation beim Starten  
 [ ] Konfiguration: DB, `config.json` oder `.env`?  
@@ -18,3 +20,7 @@
 [ ] Beim Build automatisch Version & Build Datum in Config.json & config.py setzen
 [ ] Benutzer Verwaltung?
 [ ] Lizenz Verwaltung?
+
+# Bekannte Fehler
+
+[ ] Logo nicht immer oben rechts angezeigt

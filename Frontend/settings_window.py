@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from Frontend.Info_window import AboutWindow
+import os
 
 class SettingsWindow(ctk.CTkToplevel):
     def __init__(self, parent, manager, config, on_apply=None):

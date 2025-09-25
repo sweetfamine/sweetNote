@@ -2,6 +2,7 @@ import customtkinter as ctk
 import webbrowser
 import urllib.parse
 from tkinter import font as tkfont
+import os
 
 class AboutWindow(ctk.CTkToplevel):
     def __init__(self, parent, config):
