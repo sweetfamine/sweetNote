@@ -1,13 +1,13 @@
-﻿{
-    "appearance_mode":  "light",
-    "prefill_date_on_new":  true,
-    "db_path":  "data/customers.db",
-    "supported_languages":  [
-                                "de"
-                            ],
-    "support_website":  "https://github.com/sweetfamine/sweetNote/issues",
-    "support_phone":  "",
-    "support_email":  "sweet.famine@outlook.de",
-    "app_version":  "0.1.0",
-    "build_date":  "24.09.2025"
+{
+  "appearance_mode": "light",
+  "prefill_date_on_new": true,
+  "db_path": "data/customers.db",
+  "supported_languages": [
+    "de"
+  ],
+  "support_website": "https://github.com/sweetfamine/sweetNote/issues",
+  "app_version": "0.1.0",
+  "build_date": "24.09.2025",
+  "support_phone": "",
+  "support_email": "sweet.famine@outlook.de"
 }

@@ -7,6 +7,7 @@ from Utils.validierung import parse_de_date, fmt_de_date
 from Frontend.customer_form import CustomerForm
 from Frontend.settings_window import SettingsWindow
 from Frontend.constants import labels, label_to_attr
+from Frontend.export_window import ExportWindow
 
 class MainWindow(ctk.CTk):
     def __init__(self, manager, config):
@@ -15,7 +16,7 @@ class MainWindow(ctk.CTk):
         self.config = config
         self.sort_column: Optional[str] = None
         self.sort_reverse: bool = False
-        self.title("sweetNote - Kundenverwaltung")
+        self.title("sweetNote - Partientenverwaltung")
         self.geometry("1900x600")
 
         logo_path = os.path.join(os.path.dirname(__file__), "assets", "sweetNote_Icon128.ico")
@@ -74,6 +75,9 @@ class MainWindow(ctk.CTk):
         btn_edit.pack(side="left", padx=5)
         btn_settings = ctk.CTkButton(frame_buttons, text="⚙ Einstellungen", width=140, command=self.open_settings_window)
         btn_settings.pack(side="right", padx=5)
+        btn_export = ctk.CTkButton(frame_buttons, text="Exportieren", width=120, command=self.btn_export_click)
+        btn_export.pack(side="left", padx=5)
+
 
     def _apply_treeview_style(self):
         style = ttk.Style(self)
@@ -209,3 +213,16 @@ class MainWindow(ctk.CTk):
 
     def open_settings_window(self):
         SettingsWindow(self, self.manager, self.config, on_apply=self.update_table)
+
+    def btn_export_click(self):
+        selected_items = self.tree.selection()
+        if selected_items:
+            rows = [self.tree.item(i, "values") for i in selected_items]
+        else:
+            rows = [self.tree.item(i, "values") for i in self.tree.get_children()]
+
+        if not rows:
+            messagebox.showwarning("Hinweis", "Keine Daten zum Exportieren gefunden.")
+            return
+
+        ExportWindow(self, rows)

@@ -1,4 +1,6 @@
-# sweetNote - TODO
+# sweetNote - Partientenverwaltung
+
+# TODO Liste
 
 [✔️] Hinzufügen von einem Roten \* für Pflichtfelder  
 [✔️] Echtzeit-Validierung: Eingaben sollen beim Tippen von rot zurückschalten  
